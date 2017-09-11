@@ -1,0 +1,19 @@
+{
+  "name": "CloudMagick",
+  "version": "0.1.0",
+  "description": "Lambda functions for CloudMagick",
+  "main": "index.js",
+  "author": "pataiji",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pataiji/cloudmagick"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.71.0",
+    "imagemagick": "^0.1.3"
+  },
+  "dependencies": {
+    "imagemagick": "^0.1.3"
+  }
+}

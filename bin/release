@@ -1,0 +1,44 @@
+#!/bin/bash
+
+if [ -z "$VERSION" ]; then
+    echo 'VERSION is required'
+    exit 1
+fi
+if [ -z "$CLOUD_MAGICK_RELEASE_BUCKET_NAME" ]; then
+    echo 'CLOUD_MAGICK_RELEASE_BUCKET_NAME is required'
+    exit 1
+fi
+
+CLOUD_MAGICK_TEMPLATE_FILE=cloudmagick_template.yml
+
+# Move project root
+cd "$(dirname "$(perl -e 'use Cwd "abs_path";print abs_path(shift)' "$0")")/.." || exit 1
+
+BUILD_FUNCTION_COMMAND="$(cat <<COMMAND
+cd ./functions \
+&& rm -rf ./built \
+&& mkdir ./built \
+&& cp src/*.js ./built/ \
+&& cp package.json ./built/ \
+&& cd ./built \
+&& npm install --production
+COMMAND
+)"
+
+sh -c "$BUILD_FUNCTION_COMMAND"
+
+mkdir -p ./built
+
+aws cloudformation package \
+   --template-file "$CLOUD_MAGICK_TEMPLATE_FILE" \
+   --output-template-file ./built/cloudmagick.yml \
+   --s3-bucket "$CLOUD_MAGICK_RELEASE_BUCKET_NAME"
+
+TEMPLATE_PATH="${CLOUD_MAGICK_RELEASE_BUCKET_NAME}/cloudmagick-v${VERSION}.yml"
+
+aws s3 cp ./built/cloudmagick.yml "s3://${TEMPLATE_PATH}"
+
+_REGION="$(aws s3api get-bucket-location --bucket "$CLOUD_MAGICK_RELEASE_BUCKET_NAME" --query 'LocationConstraint' | sed 's/"//g')"
+S3_SUBDOMAIN="$([ "$_REGION" = 'null' ] && echo 's3' || echo "s3-${_REGION}")"
+
+echo "Template Uploaded to https://${S3_SUBDOMAIN}.amazonaws.com/${TEMPLATE_PATH}"

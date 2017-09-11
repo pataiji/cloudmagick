@@ -1,41 +1,44 @@
-# CloudMagick
+## Install
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/cloud_magick`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'cloud_magick'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install cloud_magick
-
-## Usage
-
-TODO: Write usage instructions here
+<a href="https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=cloudmagick&amp;templateURL=https://s3-ap-northeast-1.amazonaws.com/public.pataiji.com/cloudmagick-v0.1.0.yml" target="_blank">
+<img alt="Launch Stack" src="https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg">
+</a>
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+#### Deploy
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+set environments
+```
+CLOUD_MAGICK_TEMPLATE_BUCKET_NAME
+CLOUD_MAGICK_STACK_NAME
+CLOUD_MAGICK_BUCKET_NAME
+CLOUD_MAGICK_ORIGIN_PREFIX
+CLOUD_MAGICK_CUSTOM_DOMAIN_NAME
+CLOUD_MAGICK_ACM_CERTIFICATE_ARN
+CLOUD_MAGICK_LOG_BUCKET_NAME
+CLOUD_MAGICK_LOG_PREFIX
+CLOUD_MAGICK_PRICE_CLASS
+CLOUD_MAGICK_MIN_TTL
+CLOUD_MAGICK_MAX_TTL
+```
 
-## Contributing
+and run
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/cloud_magick.
+```
+$ bin/deploy
+```
 
+#### Release
 
-## License
+set environments
+```
+CLOUD_MAGICK_RELEASE_BUCKET_NAME
+VERSION
+```
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+and run
 
+```
+$ bin/release
+```

@@ -1,0 +1,58 @@
+#!/bin/bash
+
+if [ -z "$CLOUD_MAGICK_TEMPLATE_BUCKET_NAME" ]; then
+    echo 'CLOUD_MAGICK_TEMPLATE_BUCKET_NAME is required'
+    exit 1
+fi
+if [ -z "$CLOUD_MAGICK_STACK_NAME" ]; then
+    echo 'CLOUD_MAGICK_STACK_NAME is required'
+    exit 1
+fi
+if [ -z "$CLOUD_MAGICK_BUCKET_NAME" ]; then
+    echo 'CLOUD_MAGICK_BUCKET_NAME is required'
+    exit 1
+fi
+if [ -z "$CLOUD_MAGICK_PRICE_CLASS" ]; then
+    echo 'CLOUD_MAGICK_PRICE_CLASS is required'
+    exit 1
+fi
+
+CLOUD_MAGICK_TEMPLATE_FILE=cloudmagick_template.yml
+
+# Move project root
+cd "$(dirname "$(perl -e 'use Cwd "abs_path";print abs_path(shift)' "$0")")/.." || exit 1
+
+BUILD_FUNCTION_COMMAND="$(cat <<COMMAND
+cd ./functions \
+&& rm -rf ./built \
+&& mkdir ./built \
+&& cp src/*.js ./built/ \
+&& cp package.json ./built/ \
+&& cd ./built \
+&& npm install --production
+COMMAND
+)"
+
+sh -c "$BUILD_FUNCTION_COMMAND"
+
+mkdir -p ./built
+
+aws cloudformation package \
+   --template-file "$CLOUD_MAGICK_TEMPLATE_FILE" \
+   --output-template-file ./built/cloudmagick.yml \
+   --s3-bucket "$CLOUD_MAGICK_TEMPLATE_BUCKET_NAME"
+
+aws cloudformation deploy \
+    --template-file ./built/cloudmagick.yml \
+    --capabilities CAPABILITY_NAMED_IAM \
+    --stack-name "$CLOUD_MAGICK_STACK_NAME" \
+    --parameter-overrides \
+      "BucketName=${CLOUD_MAGICK_BUCKET_NAME}" \
+      "OriginPrefix=${CLOUD_MAGICK_ORIGIN_PREFIX}" \
+      "CustomDomainName=${CLOUD_MAGICK_CUSTOM_DOMAIN_NAME}" \
+      "AcmCertificateArn=${CLOUD_MAGICK_ACM_CERTIFICATE_ARN}" \
+      "LogBucketName=${CLOUD_MAGICK_LOG_BUCKET_NAME}" \
+      "LogPrefix=${CLOUD_MAGICK_LOG_PREFIX}" \
+      "PriceClass=${CLOUD_MAGICK_PRICE_CLASS}" \
+      "MinTTL=${CLOUD_MAGICK_MIN_TTL}" \
+      "MaxTTL=${CLOUD_MAGICK_MAX_TTL}"

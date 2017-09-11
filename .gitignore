@@ -1,9 +1,3 @@
-/.bundle/
-/.yardoc
-/Gemfile.lock
-/_yardoc/
-/coverage/
-/doc/
-/pkg/
-/spec/reports/
-/tmp/
+built/
+node_modules/
+.envrc
