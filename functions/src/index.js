@@ -9,8 +9,7 @@ const TMP_INPUT_FILE_PATH = '/tmp/inputFile';
 const TMP_OUTPUT_FILE_PATH = '/tmp/converted_tmpfile';
 
 const buildS3Params = (filename) => {
-  const match = process.env.ORIGIN_PREFIX.match(/^\/?(.+)\/?$/);
-  const originPrefix = match ? match[1] + '/' : '';
+  const originPrefix = process.env.ORIGIN_PREFIX.replace(/^\//, '').replace(/\/$/, '') + '/';
   return {
     Bucket: process.env.BUCKET_NAME,
     Key: originPrefix + filename
