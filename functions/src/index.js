@@ -57,7 +57,7 @@ const buildConvertParams = (event) => {
 
   convertParams.push(TMP_INPUT_FILE_PATH);
   convertParams.push('-auto-orient');
-  const params = event.pathParameters.parameter.split('-');
+  const params = decodeURIComponent(event.pathParameters.parameter).split('-');
   convertParams = parseParams(params, convertParams);
   convertParams.push(TMP_OUTPUT_FILE_PATH);
 
