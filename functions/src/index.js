@@ -74,7 +74,7 @@ const convert = (event, callback) => {
       if (err) { callback(err, err.stack); }
 
       const convertParams = buildConvertParams(event);
-      const proc = im.convert(convertParams, (err, stdout, stderr) => {
+      im.convert(convertParams, (err, stdout, stderr) => {
         if (err) { callback(err, err.stack); }
 
         fs.readFile(TMP_OUTPUT_FILE_PATH, (err, convertedData) => {
