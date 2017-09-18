@@ -1,3 +1,9 @@
+# CloudMagick
+
+Serverless image resizing tool on AWS.
+
+![!architecture](./docs/images/architecture.png)
+
 ## Install
 
 <a href="https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=cloudmagick&amp;templateURL=https://s3-ap-northeast-1.amazonaws.com/public.pataiji.com/cloudmagick-v0.1.1.yml" target="_blank">
