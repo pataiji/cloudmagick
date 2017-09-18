@@ -1,6 +1,6 @@
 ## Install
 
-<a href="https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=cloudmagick&amp;templateURL=https://s3-ap-northeast-1.amazonaws.com/public.pataiji.com/cloudmagick-v0.1.0.yml" target="_blank">
+<a href="https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=cloudmagick&amp;templateURL=https://s3-ap-northeast-1.amazonaws.com/public.pataiji.com/cloudmagick-v0.1.1.yml" target="_blank">
 <img alt="Launch Stack" src="https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg">
 </a>
 
