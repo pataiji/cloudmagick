@@ -80,10 +80,18 @@ const convert = (event, callback) => {
         fs.readFile(TMP_OUTPUT_FILE_PATH, (err, convertedData) => {
           if (err) { callback(err, convertedData); }
 
+          const expires = (new Date(Date.now() + 315360000000)).toUTCString();
+          const etag = convertedData.length + Date.parse(data.LastModified);
+
           callback(null, {
             "isBase64Encoded": true,
             "statusCode": 200,
-            "headers": { "Content-Type": data.ContentType },
+            "headers": {
+              "Content-Type": data.ContentType,
+              "Cache-Control": "max-age=31536000",
+              "Expires": expires,
+              "ETag": etag
+            },
             "body": new Buffer(convertedData, 'binary').toString('base64')
           });
         });
