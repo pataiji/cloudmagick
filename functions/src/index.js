@@ -1,15 +1,18 @@
-'use strict';
+"use strict";
 
-const AWS = require('aws-sdk');
-const im = require('imagemagick');
-const fs = require('fs');
+const AWS = require("aws-sdk");
+const im = require("imagemagick");
+const fs = require("fs");
 const S3 = new AWS.S3();
 
-const TMP_INPUT_FILE_PATH = '/tmp/inputFile';
-const TMP_OUTPUT_FILE_PATH = '/tmp/converted_tmpfile';
+const TMP_INPUT_FILE_PATH = "/tmp/inputFile";
+const TMP_OUTPUT_FILE_PATH = "/tmp/converted_tmpfile";
 
-const buildS3Params = (filename) => {
-  const originPrefix = process.env.ORIGIN_PREFIX.replace(/^\//, '').replace(/\/$/, '');
+const buildS3Params = filename => {
+  const originPrefix = process.env.ORIGIN_PREFIX.replace(/^\//, "").replace(
+    /\/$/,
+    ""
+  );
   return {
     Bucket: process.env.BUCKET_NAME,
     Key: originPrefix.length > 0 ? originPrefix + '/' + filename : filename
@@ -17,12 +20,14 @@ const buildS3Params = (filename) => {
 };
 
 const parseParams = (params, convertParams) => {
-  let size, crop, gravity = false;
+  let size,
+    crop,
+    gravity = false;
   for (var i = 0; i < params.length; i++) {
     if (!size) {
       const match = params[i].match(/^\d*%?x?\d*%?[\^!<>@]?$/i);
       if (match) {
-        convertParams.push('-resize');
+        convertParams.push("-resize");
         convertParams.push(match[0]);
         size = true;
         continue;
@@ -31,17 +36,19 @@ const parseParams = (params, convertParams) => {
     if (!crop) {
       const match = params[i].match(/^crop(\d+x\d+\+\d+\+\d+)$/i);
       if (match) {
-        convertParams.push('-crop');
+        convertParams.push("-crop");
         convertParams.push(match[1]);
-        convertParams.push('+repage');
+        convertParams.push("+repage");
         crop = true;
         continue;
       }
     }
     if (!gravity) {
-      const match = params[i].match(/^(?:NorthWest|North|NorthEast|West|Center|East|SouthWest|South|SouthEast)$/i);
+      const match = params[i].match(
+        /^(?:NorthWest|North|NorthEast|West|Center|East|SouthWest|South|SouthEast)$/i
+      );
       if (match) {
-        convertParams.push('-gravity');
+        convertParams.push("-gravity");
         convertParams.push(match[0]);
         gravity = true;
         continue;
@@ -51,12 +58,12 @@ const parseParams = (params, convertParams) => {
   return convertParams;
 };
 
-const buildConvertParams = (event) => {
+const buildConvertParams = event => {
   let convertParams = [];
 
   convertParams.push(TMP_INPUT_FILE_PATH);
-  convertParams.push('-auto-orient');
-  const params = decodeURIComponent(event.pathParameters.parameter).split('-');
+  convertParams.push("-auto-orient");
+  const params = decodeURIComponent(event.pathParameters.parameter).split("-");
   convertParams = parseParams(params, convertParams);
   convertParams.push(TMP_OUTPUT_FILE_PATH);
 
@@ -68,31 +75,39 @@ const buildConvertParams = (event) => {
 const convert = (event, callback) => {
   const S3Params = buildS3Params(event.pathParameters.filename);
   S3.getObject(S3Params, (err, data) => {
-    if (err) { callback(err, err.stack); }
+    if (err) {
+      callback(err, err.stack);
+    }
 
-    fs.writeFile(TMP_INPUT_FILE_PATH, new Buffer(data.Body, 'binary'), (err) => {
-      if (err) { callback(err, err.stack); }
+    fs.writeFile(TMP_INPUT_FILE_PATH, new Buffer(data.Body, "binary"), err => {
+      if (err) {
+        callback(err, err.stack);
+      }
 
       const convertParams = buildConvertParams(event);
       im.convert(convertParams, (err, stdout, stderr) => {
-        if (err) { callback(err, err.stack); }
+        if (err) {
+          callback(err, err.stack);
+        }
 
         fs.readFile(TMP_OUTPUT_FILE_PATH, (err, convertedData) => {
-          if (err) { callback(err, convertedData); }
+          if (err) {
+            callback(err, convertedData);
+          }
 
-          const expires = (new Date(Date.now() + 315360000000)).toUTCString();
+          const expires = new Date(Date.now() + 315360000000).toUTCString();
           const etag = convertedData.length + Date.parse(data.LastModified);
 
           callback(null, {
-            "isBase64Encoded": true,
-            "statusCode": 200,
-            "headers": {
+            isBase64Encoded: true,
+            statusCode: 200,
+            headers: {
               "Content-Type": data.ContentType,
               "Cache-Control": "max-age=31536000",
-              "Expires": expires,
-              "ETag": etag
+              Expires: expires,
+              ETag: etag
             },
-            "body": new Buffer(convertedData, 'binary').toString('base64')
+            body: new Buffer(convertedData, "binary").toString("base64")
           });
         });
       });
