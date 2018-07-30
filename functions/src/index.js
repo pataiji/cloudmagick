@@ -7,6 +7,7 @@ const S3 = new AWS.S3();
 
 const TMP_INPUT_FILE_PATH = "/tmp/inputFile";
 const TMP_OUTPUT_FILE_PATH = "/tmp/converted_tmpfile";
+const MAX_AGE_SEC = 315360000; // 10 years
 
 const buildS3Params = filename => {
   const originPrefix = process.env.ORIGIN_PREFIX.replace(/^\//, "").replace(
@@ -97,7 +98,9 @@ const convert = (event, callback) => {
             callback(err, convertedData);
           }
 
-          const expires = new Date(Date.now() + 315360000000).toUTCString();
+          const expires = new Date(
+            Date.now() + MAX_AGE_SEC * 1000
+          ).toUTCString();
           const etag = convertedData.length + Date.parse(data.LastModified);
 
           callback(null, {
@@ -105,7 +108,7 @@ const convert = (event, callback) => {
             statusCode: 200,
             headers: {
               "Content-Type": data.ContentType,
-              "Cache-Control": "max-age=31536000",
+              "Cache-Control": "max-age=" + MAX_AGE_SEC,
               Expires: expires,
               ETag: etag
             },
