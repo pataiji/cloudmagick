@@ -13,9 +13,11 @@ const buildS3Params = filename => {
     /\/$/,
     ""
   );
+  const encodedKey =
+    originPrefix.length > 0 ? originPrefix + "/" + filename : filename;
   return {
     Bucket: process.env.BUCKET_NAME,
-    Key: originPrefix.length > 0 ? originPrefix + '/' + filename : filename
+    Key: decodeURI(encodedKey)
   };
 };
 
