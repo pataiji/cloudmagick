@@ -94,7 +94,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs8.10
       CodeUri: ./functions/built
       MemorySize: 512
       Timeout: 30
@@ -195,8 +195,11 @@ Parameters:
     Description: (Optional) S3 path prefix to store the access logs
   PriceClass:
     Type: String
-    Default: PriceClass_200
-    AllowedValues: ['PriceClass_100', 'PriceClass_200', 'PriceClass_All']
+    Default: PriceClass_All
+    AllowedValues:
+      - PriceClass_100
+      - PriceClass_200
+      - PriceClass_All
     Description: |
       Price class for CloudFront Distribution
       see also http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PriceClass.html
