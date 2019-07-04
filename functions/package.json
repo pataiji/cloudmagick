@@ -1,6 +1,6 @@
 {
   "name": "CloudMagick",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "description": "Lambda functions for CloudMagick",
   "main": "index.js",
   "author": "pataiji",

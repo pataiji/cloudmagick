@@ -1,3 +1,11 @@
+## v0.1.4 - 2019-07-04
+
+- Changed
+  - Change runtime of Lambda to nodejs8.10 from nodejs6.10
+  - Change default price class of CloudFront to PriceClass_All from PriceClass_200
+- Fixed
+  - Use `Buffer.from` instead of `new Buffer`
+
 ## v0.1.3 - 2018-08-01
 
 - feature
