@@ -82,7 +82,7 @@ const convert = (event, callback) => {
       callback(err, err.stack);
     }
 
-    fs.writeFile(TMP_INPUT_FILE_PATH, new Buffer(data.Body, "binary"), err => {
+    fs.writeFile(TMP_INPUT_FILE_PATH, Buffer.from(data.Body), err => {
       if (err) {
         callback(err, err.stack);
       }
@@ -112,7 +112,7 @@ const convert = (event, callback) => {
               Expires: expires,
               ETag: etag
             },
-            body: new Buffer(convertedData, "binary").toString("base64")
+            body: Buffer.from(convertedData).toString("base64")
           });
         });
       });
